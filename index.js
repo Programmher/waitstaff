@@ -6,9 +6,9 @@ const { execSync } = require('child_process');
 const [,, ...params] = argv;
 const USAGE = `
 Usage:
-  $cmdname host:port [-t timeout] [-- command args]
+  $cmdname [host]:port [-q] [-t <timeout>] [-- command args]
   -q | --quiet                        Do not output any status messages
-  -t timeout | --timeout=timeout      Timeout in seconds, zero for no timeout
+  -t <timeout> | --timeout=<timeout>  Timeout in seconds, zero for no timeout
   -- COMMAND ARGS                     Execute command with args after the test finishes
 `;
 
@@ -79,16 +79,17 @@ const main = async (host, port, command) => {
   }
 
   if(command) {
-    try {
-    console.log(command);
+    note(`Running \`${command}\``);
     execSync(command, { cwd: cwd(), stdio: 'inherit', env });
-    } catch(e) {
-      console.error(e);
-    }
   }
 };
 
-main(host, port, command).then(() => exit(0)).catch(() => complain('unknown error'));
+main(host, port, command)
+  .then(() => exit(0))
+  .catch((e) => {
+      if(command && e.status) exit(e.status);
+      else complain('unknown error');
+    });
 
 note(`waiting for ${host}:${port} ${ms ? `for ${ms} ms.` : 'forever.'}`);
 if(ms) after(ms).then(() => complain('timed out; no connection available'));
