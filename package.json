@@ -1,0 +1,24 @@
+{
+  "name": "waitstaff",
+  "version": "0.9.0",
+  "description": "Yet another waiter",
+  "main": "index.js",
+  "bin": "./index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/randallsquared/waitstaff.git"
+  },
+  "keywords": [
+    "wait",
+    "docker"
+  ],
+  "author": "Randall Randall <randall@randallsquared.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/randallsquared/waitstaff/issues"
+  },
+  "homepage": "https://github.com/randallsquared/waitstaff#readme"
+}
