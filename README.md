@@ -24,8 +24,7 @@ Ideally every system would be resilient to upstream failure, but an increasingly
 
 ## roadmap
 
-1. make usable without global installation (0.9.5)
-1. tests (0.9.8)
+1. tests (0.9.5)
 1. add ability to specify requirable modules (1.0)
 
 ## license
