@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/randallsquared/waitstaff/issues"
   },
-  "homepage": "https://github.com/randallsquared/waitstaff#readme"
+  "homepage": "https://github.com/randallsquared/waitstaff#readme",
+  "devDependencies": {
+    "eslint": "^5.4.0"
+  }
 }

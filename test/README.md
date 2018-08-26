@@ -40,28 +40,25 @@
 1. matchingTimeoutOpt should return per the following table
     | given | response |
     | ----- | -------- |
-    | -t | false |
-    | --timeout | false |
+    | -t | [] |
+    | --timeout | [] |
     | -t=1 | true |
     | --timeout=1 | true |
-    | --t=1 | false |
-    | -t= | error ~ no following milliseconds && error ~ -t=555  |
-    | -t=a | error ~ no following milliseconds && error ~ -t=555  |
-    | --timeout= | error ~ no following milliseconds && error ~ --timeout=555 |
-    | --timeout=a | error ~ no following milliseconds && error ~ --timeout=555 |
+    | --t=1 | [] |
     | --testing= | error ~ invalid |
+1. validateTimeout should return per the following table
+    | given | response |
+    | ----- | -------- |
+    | ['', '-t='] | error ~ no following milliseconds && error ~ -t=555  |
+    | ['a', '-t='] | error ~ no following milliseconds && error ~ -t=555  |
+    | ['', '--timeout='] | error ~ no following milliseconds && error ~ --timeout=555 |
+    | ['a', '--timeout='] | error ~ no following milliseconds && error ~ --timeout=555 |
 1. parse no host:port should return an error with "no port"
 1. parse no host:port with quiet flag should return an error with "no port"
 1. parse with `host:` should raise error with "cannot be empty or zero"
 1. parse with `host:0` should raise error with "cannot be empty or zero"
 1. parse with ':Nnnn' should return an object with host=localhost and port=Nnnn
-1. stub `process.exit` and `console.error`
-1. parse help tests
-    console.error called with Order.USAGE() and process.exit called with 1, given
-    1. -h
-    1. --help
-    1. -q -h
-    1. -h -q
+1. parse with ':8080 --what' should raise error with "unknown"
 1. parse quiet tests: both -q and --quiet should return an object with quiet=true
 1. parse timeout tests
     | given | response |
@@ -80,6 +77,13 @@
 1. given a double dash with multiple strings following, should return object with command equal to the string formed by joining those strings by one space
 1. given a double dash with multiple strings, including `--quiet`, following, should return object with command equal to the string formed by joining those strings by one space, and NOT quiet=true
 1. given a double dash with multiple strings, including `--help`, following, should return object with command equal to the string formed by joining those strings by one space, and NOT perform the help behavior
+1. stub `process.exit` and `console.error`
+1. parse help tests
+    console.error called with Order.USAGE() and process.exit called with 1, given
+    1. -h
+    1. --help
+    1. -q -h
+    1. -h -q
 
 ## Waiter tests
 
