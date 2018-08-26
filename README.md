@@ -8,17 +8,22 @@
 
 `waitstaff` requires a port on the command line, preceded by a colon and optionally a hostname, like `waitstaff localhost:8080` or `waitstaff :8080`.  If the hostname is missing, it will default to `localhost`.
 
+### help
+
+If provided `-h` or `--help`, `waitstaff` will list all supported options.  In the event that `waitstaff` doesn't understand the given parameters, it will behave as though help were requested, after a whiny message.
+
 ### quiet
 
 Optionally, an argument to refrain from conversational output can be provided: either `-q` or `--quiet`.
 
 ### timeout
 
-Optionally, an argument to specify timeout in milliseconds can be provided, in one of three forms:
+Optionally, an argument to specify timeout in milliseconds can be provided, in one of several forms:
 
 - `-t <timeout>`
-- `--timeout=<timeout>`
+- `-t=<timeout>`
 - `--timeout <timeout>`
+- `--timeout=<timeout>`
 
 The `timeout` can be any positive integer or zero.  Positive numbers are treated as milliseconds to wait before exiting with an error code.  Zero is treated as an instruction to wait until interrupted.
 
@@ -105,21 +110,21 @@ Randalls-MBP:waitstaff randall$
 
 One of the generally accepted practices of running node.js in docker is to have something that waits for upstream resources to become available before continuing startup.
 
-Some typical suggestions:
+There are some commonly-recommended practices, but all of them have issues, or situations in which they aren't optimal.
 
-* order your docker-compose or other orchestration so that one container depends on another
-* use wait-for.sh or one of its many, many brethren
-* build your system to be resilient to missing upstream requirements
+### use docker-compose `depends_on` or other orchestration so that one container depends on another
 
-However, all of these have issues, or situations in which they are less than optimal.
+Orchestrator ordering only ensures that a container is up before starting another; the daemon inside the container may be milliseconds or seconds from being actually ready to serve dependent applications.
 
-Orchestrator ordering only ensures that a container is up before starting another; the daemon inside the container may be milliseconds or seconds from being actually ready to service dependent services.
+### use wait-for.sh or one of its many, many brethren
 
-Shell scripts such as wait-for.sh have no packaging system, so are copied about with abandon.   Most developers today are not especially fluent with shell scripting, so obvious bugs or deficiencies may remain even after careful review and even in the case of small code size.  Containers optimized for image size may not have bash, or any full-featured shell at all, beyond the minimum.
+Shell scripts such as wait-for.sh have no packaging system, so are copied about with abandon.   Most developers today are not especially fluent with shell scripting, so obvious bugs or deficiencies may remain even after careful review and even in the case of small code size.  Containers optimized for image size may not have bash, or any full-featured shell at all, beyond the minimum.  One thing that we know node.js containers *will* have, though, is... node.
+
+### build your system to be resilient to missing upstream requirements
 
 Ideally every system would be resilient to upstream failure, but an increasingly common response to such issues is to throw away the container or containers struggling with loss or any other problem, and start new ones.  In this case, waiting for another system to become available is additional overhead that the immediately concerned developer may not have bothered to build, and may not ever need to build if some simple system will just wait for availability before the main program starts.
 
-`waitstaff` aims to replace the wait-for.sh script often suggested on stackoverflow and in other places, and as such replicates the interface of that script.
+`waitstaff` aims to replace the wait-for.sh script often suggested on stackoverflow and in other places, and as such replicates and extends the interface of that script.
 
 ## roadmap
 
@@ -128,9 +133,14 @@ Ideally every system would be resilient to upstream failure, but an increasingly
 1. support URIs
    - `...://hostname` to check that the standard port is open
    - `...://hostname:port` to check another port (this seems unnecessary, since the URI scheme part could just be omitted, but is less confusing for quick usage than an error in this case)
+1. add interval support: --min=50 to check every 50 milliseconds
+1. add multi-interval support: -min=12000,100 to try once, wait 12 seconds and try, then try every 100ms
+    Use case: your service in testing has to wait for dockerized mysql to initialize from scratch, which empirically takes ~12 seconds, so if you can't connect immediately, you want to avoid false positives as mysql opens and closes port 3306 while it starts up for the first time 
+1. add backoff support: -b | --backoff=1.5 to check after ((previous interval) * 1.5) ms each try
+1. add maximum interval support: --max=3600000 to check at least once an hour even if it still isn't up
+1. add maximum attempt support: --attempts=10 to check only ten times before erroring out
+    There is some overlap with timeout, here, but with a backoff specified, calculating the desired timeout is error-prone
 
 ## license
 
 At your option, either LICENSE (MIT) or UNLICENSE (public domain).
-
-
