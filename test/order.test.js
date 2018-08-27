@@ -1,0 +1,95 @@
+const test = require('blue-tape');
+
+// Test that Order is a constructor which provides defaults, 
+// and that the usage string exists
+const Order = require('../lib/order');
+const defaultTimeout = 200;
+
+test('Order defaults', async (t) => {
+  t.ok(Order.USAGE.match(/after the test finishes/im), 'USAGE string exists');
+
+  const o = new Order();
+  t.ok('localhost'===o.host, 'host defaults to localhost');
+  t.ok(undefined===o.port, 'port defaults to undefined');
+  t.ok(undefined===o.command, 'command defaults to undefined');
+  t.ok(false===o.quiet, 'quiet defaults to false');
+  t.ok(defaultTimeout===o.timeout, 'timeout defaults to 200ms');
+
+  t.ok(typeof o.opts === 'object', 'Order.opts is an object, having:');
+  t.ok(o.opts.quiet.includes, ' An array called "quiet", including');
+  t.ok(o.opts.quiet.includes('-q'), '-q');
+  t.ok(o.opts.quiet.includes('--quiet'), '--quiet');
+
+  t.ok(o.opts.help.includes, ' An array called "help", including');
+  t.ok(o.opts.help.includes('-h'), '-h');
+  t.ok(o.opts.help.includes('--help'), '--help');
+
+  t.ok(o.opts.timeout.includes, ' An array called "timeout", including');
+  t.ok(o.opts.timeout.includes('-t'), '-t');
+  t.ok(o.opts.timeout.includes('--timeout'), '--timeout');
+
+  t.ok(o.opts.combinedTimeout.includes, ' An array called "combinedTimeout", including');
+  t.ok(o.opts.combinedTimeout.includes('-t='), '-t=');
+  t.ok(o.opts.combinedTimeout.includes('--timeout='), '--timeout=');
+});
+
+// Test overriding defaults.
+const optionTypes = ['quiet', 'help', 'timeout', 'combinedTimeout'];
+const overrideArray = [1, 2, 3];
+const settingTypes = ['host', 'port', 'command', 'quiet', 'timeout'];
+const override = 'injected';
+
+test('Order defaults can be overridden', async (t) => {
+  optionTypes.forEach((type) => {
+    const o2 = new Order({opts: {[type]: overrideArray}});
+    t.same(o2.opts[type], overrideArray, `${type} can be overridden`);
+  });
+
+  settingTypes.forEach((type) => {
+    const o2 = new Order({[type]: override});
+    t.same(o2[type], override, `${type} can be overridden`);
+  });
+});
+
+// Test flag handlers
+const flagInputs = {
+  isHelp: {bad: '-b', short: '-h', long: '--help'},
+  isQuiet: {bad: '-b', short: '-q', long: '--quiet'},
+  isTimeout: {bad: '-b', short: '-t', long: '--timeout'},
+  isCombinedTimeout: {bad: '-b=', short: '-t=', long: '--timeout=', like: 'isTimeout'},
+};
+
+test('Order misc methods', async (t) => {
+  Object.keys(flagInputs).forEach((f) => {
+    const {bad, short, long, like} = flagInputs[f];
+    const o = new Order();
+    t.notOk(o[f](bad), `${f} does not respond to ${bad}`);
+    t.ok(o[f](short), `${f} does respond to ${short}`);
+    t.notOk(o[f](bad), `${f} still does not respond to ${bad}`);
+    t.notOk(o[f](short), `${f} no longer responds to ${short}`);
+    const o2 = new Order();
+    t.ok(o2[f](long), `${f} does respond to ${long}`);
+    t.notOk(o2[f](bad), `${f} does not respond to ${bad}`);
+    t.notOk(o2[f](long), `${f} no longer responds to ${long}`);
+    if(like) {
+      const {short, long} = flagInputs[like];
+      t.notOk(o2[like](short), `${like} also no longer responds to ${short}`);
+      t.notOk(o2[like](long), `${like} also no longer responds to ${long}`);
+    }
+  });
+});
+
+// Testing timeout in depth
+const invalidTimeoutSpec = ['--timeout=', '-t=', '--testing=', '--testing='];
+
+test('Order timeout parsing and validation', async (t) => {
+  const o = new Order({timeout: 555, opts: {combinedTimeout: invalidTimeoutSpec}});
+  t.same(o.matchingTimeoutOpt('-t'), [], 'matchingTimeoutOpt does not parse -t');
+  t.same(o.matchingTimeoutOpt('--timeout'), [], 'matchingTimeoutOpt does not parse --timeout');
+  t.same(o.matchingTimeoutOpt('-t=1'), ['1', '-t='], 'matchingTimeoutOpt does parse -t=1');
+  t.same(o.matchingTimeoutOpt('--timeout=1'), ['1', '--timeout='], 'matchingTimeoutOpt does parse --timeout=1');
+  t.same(o.matchingTimeoutOpt('--t=1'), [], 'matchingTimeoutOpt does not parse --t=1');
+  t.throws(() => o.matchingTimeoutOpt('--testing=1'), /invalid/im, 'matchingTimeoutOpt throws upon encountering an invalid spec');
+
+});
+

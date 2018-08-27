@@ -25,17 +25,17 @@
 
 ### other methods
 
-1. get a new Options object
+1. get a new Order object
 1. Order.USAGE() returns a string of at least length N, and containing 'after the test finishes'
 1. for each of isHelp, isQuiet, isTimeout
     1. passing a parameter which is not their parameter should return false
     1. passing a parameter which is their parameter should return true
     1. passing a parameter which is not their parameter should still return false
     1. passing a parameter which is their parameter should now return false, since we've seen it already
-1. get a new Options object
-1. the same steps should work for isCombinedTimeout after getting a new Options object
+1. get a new Order object
+1. the same steps should work for isCombinedTimeout after getting a new Order object
 1. isTimeout should also return false for a timeout parameter after isCombinedTimeout returns true
-1. get a new Options object and add a default timeout of 555, and to opts combinedTimeout
+1. get a new Order object and add a default timeout of 555, and to opts combinedTimeout
     `['--timeout=', '-t=', '--testing=', '--testing=']`
 1. matchingTimeoutOpt should return per the following table
     | given | response |
@@ -52,7 +52,7 @@
     | ['', '-t='] | error ~ no following milliseconds && error ~ -t=555  |
     | ['a', '-t='] | error ~ no following milliseconds && error ~ -t=555  |
     | ['', '--timeout='] | error ~ no following milliseconds && error ~ --timeout=555 |
-    | ['a', '--timeout='] | error ~ no following milliseconds && error ~ --timeout=555 |
+    | ['a', --timeout='] | error ~ no following milliseconds && error ~ --timeout=555 |
 1. parse no host:port should return an error with "no port"
 1. parse no host:port with quiet flag should return an error with "no port"
 1. parse with `host:` should raise error with "cannot be empty or zero"
