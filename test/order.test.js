@@ -83,7 +83,8 @@ test('Order misc methods', async (t) => {
 const invalidTimeoutSpec = ['--timeout=', '-t=', '--testing=', '--testing='];
 
 test('Order timeout parsing and validation', async (t) => {
-  const o = new Order({timeout: 555, opts: {combinedTimeout: invalidTimeoutSpec}});
+  const defaultTimeout = 555;
+  const o = new Order({timeout: defaultTimeout, opts: {combinedTimeout: invalidTimeoutSpec}});
   t.same(o.matchingTimeoutOpt('-t'), [], 'matchingTimeoutOpt does not parse -t');
   t.same(o.matchingTimeoutOpt('--timeout'), [], 'matchingTimeoutOpt does not parse --timeout');
   t.same(o.matchingTimeoutOpt('-t=1'), ['1', '-t='], 'matchingTimeoutOpt does parse -t=1');
@@ -91,5 +92,44 @@ test('Order timeout parsing and validation', async (t) => {
   t.same(o.matchingTimeoutOpt('--t=1'), [], 'matchingTimeoutOpt does not parse --t=1');
   t.throws(() => o.matchingTimeoutOpt('--testing=1'), /invalid/im, 'matchingTimeoutOpt throws upon encountering an invalid spec');
 
+  t.equal(o.validateTimeout('500', '-t'), 500, 'Correctly parses timeout numbers: 500');
+  t.equal(o.validateTimeout('0', '-t'), 0, 'Correctly parses timeout numbers: 0');
+
+  const cases = [['', '-t='], ['a', '-t='], ['', '--timeout=']];
+  cases.forEach((c) => {
+    t.throws(
+      () => o.validateTimeout(...c), 
+      new RegExp(`no following milliseconds.+${c[1]}${defaultTimeout}`), 
+      `validateTimeout throws upon encountering bad timeout '${c[0]}', keeping given timeout option style: '${c[1]}'`);
+  });
+
 });
 
+test('Order parsing errors', async (t) => {
+  const defaultTimeout = 555;
+  const quiet = true;
+  const cases = [
+    [[], /no port/im, 'order must contain a host:port parameter'],
+    [['--quiet'], /no port/im, 'the quiet flag should not silence errors', quiet],
+    [['localhost:'], /port cannot be empty or zero/im, 'order port cannot be empty'],
+    [['localhost:0'], /port cannot be empty or zero/im, 'order port cannot be zero'],
+    [[':8080', '--what'], /unknown/im, 'unknown parameters are rejected'],
+    [[':8080', '-t', 'a'], /no following milliseconds.+-t 555/im, "-t: 'a' is not a timeout integer in milliseconds"],
+    [[':8080', '-q', '-t'], /no following milliseconds.+-t 555/im, "milliseconds part cannot be missing", quiet],
+    [[':8080', '--timeout', 'a'], /no following milliseconds.+--timeout 555/im, "--timeout: 'a' is not a timeout integer in milliseconds"],
+    [[':8080', '-q', '--timeout'], /no following milliseconds.+--timeout 555/im, "milliseconds part cannot be missing", quiet],
+    [[':8080', '--'], /standalone/im, 'double dash without a command to run is invalid'],
+  ];
+  cases.forEach((c) => {
+    const o = new Order({timeout: defaultTimeout});
+    t.throws(
+      () => o.parse(c[0]),
+      c[1],
+      c[2]
+    );
+    if(c[3]) {
+      t.equal(o.quiet, true, ' and quiet flag did not silence error');
+    }
+  });
+  t.throws(() => o.parse([]));
+});

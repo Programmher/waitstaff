@@ -42,8 +42,8 @@
     | ----- | -------- |
     | -t | [] |
     | --timeout | [] |
-    | -t=1 | true |
-    | --timeout=1 | true |
+    | -t=1 | ['1', '-t=] |
+    | --timeout=1 | ['1', '--timeout=] |
     | --t=1 | [] |
     | --testing= | error ~ invalid |
 1. validateTimeout should return per the following table
@@ -52,9 +52,8 @@
     | ['', '-t='] | error ~ no following milliseconds && error ~ -t=555  |
     | ['a', '-t='] | error ~ no following milliseconds && error ~ -t=555  |
     | ['', '--timeout='] | error ~ no following milliseconds && error ~ --timeout=555 |
-    | ['a', --timeout='] | error ~ no following milliseconds && error ~ --timeout=555 |
-1. parse no host:port should return an error with "no port"
-1. parse no host:port with quiet flag should return an error with "no port"
+1. parse no host:port should raise an error with "no port"
+1. parse no host:port with quiet flag should raise an error with "no port"
 1. parse with `host:` should raise error with "cannot be empty or zero"
 1. parse with `host:0` should raise error with "cannot be empty or zero"
 1. parse with ':Nnnn' should return an object with host=localhost and port=Nnnn
