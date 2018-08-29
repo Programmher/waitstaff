@@ -131,5 +131,32 @@ test('Order parsing errors', async (t) => {
       t.equal(o.quiet, true, ' and quiet flag did not silence error');
     }
   });
-  t.throws(() => o.parse([]));
+});
+
+test('Order parsing happy cases', async (t) => {
+  const cases = [
+    [[':8080', '--', 'ls'], 'ls', 'solo command'],
+    [[':8080', '--', 'ls', '-l'], 'ls -l', 'command with argument'],
+    [[':8080', '--', 'ls', '--quiet'], 'ls --quiet', 'command includes a quiet flag'],
+    [[':8080', '--', 'ls', '--help'], 'ls --help', 'command includes a help flag'],
+  ];
+  cases.forEach(([params, command, comment]) => {
+    const o = new Order();
+    const parsed = o.parse(params);
+    t.equal(parsed.command, command, comment);
+    t.equal(parsed.quiet, false, ' and not quiet');
+  });
+});
+
+test('Order parsing help behavior', async(t) => {
+  const cases = [
+    [['-h'], 'short help flag'],
+    [['--help'], 'long help flag'],
+    [['-q', '-h'], 'short help flag, unquieted even with quiet flag first'],
+    [['-h', '-q', ':8080'], 'short help flag, unquieted even with quiet flag after'],
+  ];
+  cases.forEach(([params, comment]) => {
+    const o = new Order();
+    t.throws(() => o.parse(params), /after the test finishes/im,  comment);
+  });
 });

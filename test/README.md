@@ -76,9 +76,7 @@
 1. given a double dash with multiple strings following, should return object with command equal to the string formed by joining those strings by one space
 1. given a double dash with multiple strings, including `--quiet`, following, should return object with command equal to the string formed by joining those strings by one space, and NOT quiet=true
 1. given a double dash with multiple strings, including `--help`, following, should return object with command equal to the string formed by joining those strings by one space, and NOT perform the help behavior
-1. stub `process.exit` and `console.error`
 1. parse help tests
-    console.error called with Order.USAGE() and process.exit called with 1, given
     1. -h
     1. --help
     1. -q -h
