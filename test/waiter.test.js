@@ -52,15 +52,15 @@ test('waiter wait immediate', async (t) => {
     t.comment(`Took ${timer.time()} milliseconds to resolve connection to server ${serverPort}`);
     server.close();
   };
-  const listening = () => t.comment(`server ${serverPort} started`);
+  const listening = () => t.comment(`server ${serverPort} started before waiting`);
   server.listen(serverPort, serverHost, listening);
-  // started listener immediately
-  setTimeout(() => Waiter.wait(serverHost, serverPort).then(success), 10);
+  setTimeout(() => Waiter.wait(serverHost, serverPort).then(success), 1);
 });
 
-test('waiter wait for 200ms', async (t) => {
+test('waiter wait for a bit', async (t) => {
   const server = net.createServer();
   const serverPort = 11913;
+  const delay = 100;
   server.on('error', failed);
   await t.shouldFail(Waiter.connect(serverHost, serverPort), /ECONNREFUSED/, `connect fails when no server ${serverPort} exists`);
   const timer = new Timer().start();
@@ -69,8 +69,7 @@ test('waiter wait for 200ms', async (t) => {
     t.comment(`Took ${timer.time()} milliseconds to resolve connection to server ${serverPort}`);
     server.close();
   };
-  const listening = () => t.comment(`server ${serverPort} started`);
+  const listening = () => t.comment(`server ${serverPort} started after ${delay}ms`);
   Waiter.wait(serverHost, serverPort).then(success);
-  // waiting for 200ms before we start the listener
-  setTimeout(() => server.listen(serverPort, serverHost, listening), 100);
+  setTimeout(() => server.listen(serverPort, serverHost, listening), delay);
 });
