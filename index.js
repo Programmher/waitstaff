@@ -10,8 +10,10 @@ const { host, port, command, quiet, timeout } = order.parseOrQuit();
 
 Waiter.wait(host, port, command, quiet)
   .then(() => {
-    if(!quiet) console.log(`Running \`${command}\``);
-    execSync(command, { cwd: cwd(), stdio: 'inherit', env });
+    if(!quiet && command) {
+      console.log(`Running \`${command}\``);
+      return execSync(command, { cwd: cwd(), stdio: 'inherit', env });
+    }
   })
   .then(() => exit(0))
   .catch((e) => {
