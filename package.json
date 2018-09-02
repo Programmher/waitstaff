@@ -1,11 +1,12 @@
 {
   "name": "waitstaff",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "description": "Yet another waiter",
   "main": "index.js",
   "bin": "./index.js",
   "scripts": {
-    "test": "blue-tape test/*.test.js"
+    "test": "blue-tape test/*.test.js",
+    "test-cov": "nyc blue-tape test/*.test.js"
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,7 @@
   "homepage": "https://github.com/randallsquared/waitstaff#readme",
   "devDependencies": {
     "blue-tape": "^1.0.0",
-    "eslint": "^5.4.0"
+    "eslint": "^5.4.0",
+    "nyc": "^13.0.1"
   }
 }

@@ -92,8 +92,8 @@ test('Order timeout parsing and validation', async (t) => {
   t.same(o.matchingTimeoutOpt('--t=1'), [], 'matchingTimeoutOpt does not parse --t=1');
   t.throws(() => o.matchingTimeoutOpt('--testing=1'), /invalid/im, 'matchingTimeoutOpt throws upon encountering an invalid spec');
 
-  t.equal(o.validateTimeout('500', '-t'), 500, 'Correctly parses timeout numbers: 500');
-  t.equal(o.validateTimeout('0', '-t'), 0, 'Correctly parses timeout numbers: 0');
+  t.equal(o.validateTimeout('500'), 500, 'Correctly parses timeout numbers: 500');
+  t.equal(o.validateTimeout('0'), 0, 'Correctly parses timeout numbers: 0');
 
   const cases = [['', '-t='], ['a', '-t='], ['', '--timeout=']];
   cases.forEach((c) => {
@@ -135,10 +135,10 @@ test('Order parsing errors', async (t) => {
 
 test('Order parsing happy cases', async (t) => {
   const cases = [
-    [[':8080', '--', 'ls'], 'ls', 'solo command'],
-    [[':8080', '--', 'ls', '-l'], 'ls -l', 'command with argument'],
-    [[':8080', '--', 'ls', '--quiet'], 'ls --quiet', 'command includes a quiet flag'],
-    [[':8080', '--', 'ls', '--help'], 'ls --help', 'command includes a help flag'],
+    [[':8080', '-t=150', '--', 'ls'], 'ls', 'solo command'],
+    [[':8080', '-t=150', '--', 'ls', '-l'], 'ls -l', 'command with argument'],
+    [[':8080', '-t=150', '--', 'ls', '--quiet'], 'ls --quiet', 'command includes a quiet flag'],
+    [[':8080', '-t=150', '--', 'ls', '--help'], 'ls --help', 'command includes a help flag'],
   ];
   cases.forEach(([params, command, comment]) => {
     const o = new Order();
