@@ -166,7 +166,7 @@ Usage:
   $cmdname [host]:port [-q] [-t <timeout>] [-- <command>[ <args>]]
   -h | --help                         This message
   -q | --quiet                        Do not output any status messages
-  -t <timeout> | --timeout=<timeout>  Timeout in seconds, zero for no timeout
+  -t <timeout> | --timeout=<timeout>  Timeout in milliseconds, zero for no timeout
   -- <command> <args>                 Execute command with args after the test finishes
 
 Randalls-MBP:waitstaff randall$
@@ -200,7 +200,7 @@ Ideally every system would be resilient to upstream failure, but an increasingly
    - `...://hostname:port` to check another port (this seems unnecessary, since the URI scheme part could just be omitted, but is less confusing for quick usage than an error in this case)
 1. add interval support: --min=50 to check every 50 milliseconds
 1. add multi-interval support: -min=12000,100 to try once, wait 12 seconds and try, then try every 100ms
-    Use case: your service in testing has to wait for dockerized mysql to initialize from scratch, which empirically takes ~12 seconds, so if you can't connect immediately, you want to avoid false positives as mysql opens and closes port 3306 while it starts up for the first time 
+    Use case: your service in testing has to wait for dockerized mysql to initialize from scratch, which empirically takes ~12 seconds, so if you can't connect immediately, you want to avoid false positives as mysql opens and closes port 3306 while it starts up for the first time
 1. add backoff support: -b | --backoff=1.5 to check after ((previous interval) * 1.5) ms each try
 1. add maximum interval support: --max=3600000 to check at least once an hour even if it still isn't up
 1. add maximum attempt support: --attempts=10 to check only ten times before erroring out
