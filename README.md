@@ -42,32 +42,85 @@ With a command, `waitstaff` will delegate to the exit code of the command that w
 
 ```sh-session
 
-Randalls-MBP:waitstaff randall$ node index.js  localhost:32940 -t 500 -- ls -l
+Randalls-MBP:waitstaff randall$ node index.js  localhost:32940 -t 500 -- ls -al
 waiting for localhost:32940 for 500 ms.
-ls -l
-total 40
--rw-r--r--  1 randall  staff  1072 Aug 19 22:26 LICENSE
--rw-r--r--  1 randall  staff  1980 Aug 20 05:09 README.md
--rw-r--r--  1 randall  staff  1212 Aug 19 22:26 UNLICENSE
--rw-r--r--  1 randall  staff  2698 Aug 19 22:30 index.js
--rw-r--r--  1 randall  staff   592 Aug 19 22:57 package.json
+Running `ls -al`
+total 152
+drwxr-xr-x  13 randall  staff    416 Sep  2 08:08 .
+drwxr-xr-x   9 randall  staff    288 Sep  1 15:33 ..
+-rw-r--r--   1 randall  staff    539 Aug 26 17:20 .eslintrc.yml
+drwxr-xr-x  13 randall  staff    416 Sep  2 08:08 .git
+-rw-r--r--   1 randall  staff     14 Aug 26 16:17 .gitignore
+-rw-r--r--   1 randall  staff   1072 Aug 19 22:26 LICENSE
+-rw-r--r--   1 randall  staff   7356 Aug 25 17:25 README.md
+-rw-r--r--   1 randall  staff   1212 Aug 19 22:26 UNLICENSE
+-rw-r--r--   1 randall  staff    885 Sep  1 10:37 index.js
+drwxr-xr-x   5 randall  staff    160 Aug 25 17:31 lib
+-rw-r--r--   1 randall  staff  44196 Sep  2 08:08 package-lock.json
+-rw-r--r--   1 randall  staff    651 Aug 29 19:44 package.json
+drwxr-xr-x   6 randall  staff    192 Sep  1 19:33 test
 Randalls-MBP:waitstaff randall$ node index.js google.com:80 -t 500 -- ls -l
 waiting for google.com:80 for 500 ms.
-ls -l
-total 40
--rw-r--r--  1 randall  staff  1072 Aug 19 22:26 LICENSE
--rw-r--r--  1 randall  staff  1980 Aug 20 05:09 README.md
--rw-r--r--  1 randall  staff  1212 Aug 19 22:26 UNLICENSE
--rw-r--r--  1 randall  staff  2698 Aug 19 22:30 index.js
--rw-r--r--  1 randall  staff   592 Aug 19 22:57 package.json
-Randalls-MBP:waitstaff randall$ node index.js google.com:80 -t 500 -q -- ls -l
-ls -l
-total 40
--rw-r--r--  1 randall  staff  1072 Aug 19 22:26 LICENSE
--rw-r--r--  1 randall  staff  1980 Aug 20 05:09 README.md
--rw-r--r--  1 randall  staff  1212 Aug 19 22:26 UNLICENSE
--rw-r--r--  1 randall  staff  2698 Aug 19 22:30 index.js
--rw-r--r--  1 randall  staff   592 Aug 19 22:57 package.json
+Running `ls -l`
+total 136
+-rw-r--r--  1 randall  staff   1072 Aug 19 22:26 LICENSE
+-rw-r--r--  1 randall  staff   7356 Aug 25 17:25 README.md
+-rw-r--r--  1 randall  staff   1212 Aug 19 22:26 UNLICENSE
+-rw-r--r--  1 randall  staff    885 Sep  1 10:37 index.js
+drwxr-xr-x  5 randall  staff    160 Aug 25 17:31 lib
+-rw-r--r--  1 randall  staff  44196 Sep  2 08:08 package-lock.json
+-rw-r--r--  1 randall  staff    651 Aug 29 19:44 package.json
+drwxr-xr-x  6 randall  staff    192 Sep  1 19:33 test
+Randalls-MBP:waitstaff randall$ clear
+Randalls-MBP:waitstaff randall$ time node index.js  localhost:32940 -t 500 -- ls -al
+waiting for localhost:32940 for 500 ms.
+Running `ls -al`
+total 152
+drwxr-xr-x  13 randall  staff    416 Sep  2 08:08 .
+drwxr-xr-x   9 randall  staff    288 Sep  1 15:33 ..
+-rw-r--r--   1 randall  staff    539 Aug 26 17:20 .eslintrc.yml
+drwxr-xr-x  13 randall  staff    416 Sep  2 08:08 .git
+-rw-r--r--   1 randall  staff     14 Aug 26 16:17 .gitignore
+-rw-r--r--   1 randall  staff   1072 Aug 19 22:26 LICENSE
+-rw-r--r--   1 randall  staff   7356 Aug 25 17:25 README.md
+-rw-r--r--   1 randall  staff   1212 Aug 19 22:26 UNLICENSE
+-rw-r--r--   1 randall  staff    885 Sep  1 10:37 index.js
+drwxr-xr-x   5 randall  staff    160 Aug 25 17:31 lib
+-rw-r--r--   1 randall  staff  44196 Sep  2 08:08 package-lock.json
+-rw-r--r--   1 randall  staff    651 Aug 29 19:44 package.json
+drwxr-xr-x   6 randall  staff    192 Sep  1 19:33 test
+
+real	0m0.113s
+user	0m0.075s
+sys	0m0.027s
+Randalls-MBP:waitstaff randall$ time node index.js  localhost:11911 -t 500 -- ls -al
+waiting for localhost:11911 for 500 ms.
+timed out; no connection available
+
+real	0m0.594s
+user	0m0.077s
+sys	0m0.024s
+Randalls-MBP:waitstaff randall$ time node index.js  www.google.com:80 --timeout=150 -- ls -al
+waiting for www.google.com:80 for 150 ms.
+Running `ls -al`
+total 152
+drwxr-xr-x  13 randall  staff    416 Sep  2 08:08 .
+drwxr-xr-x   9 randall  staff    288 Sep  1 15:33 ..
+-rw-r--r--   1 randall  staff    539 Aug 26 17:20 .eslintrc.yml
+drwxr-xr-x  13 randall  staff    416 Sep  2 08:08 .git
+-rw-r--r--   1 randall  staff     14 Aug 26 16:17 .gitignore
+-rw-r--r--   1 randall  staff   1072 Aug 19 22:26 LICENSE
+-rw-r--r--   1 randall  staff   7356 Aug 25 17:25 README.md
+-rw-r--r--   1 randall  staff   1212 Aug 19 22:26 UNLICENSE
+-rw-r--r--   1 randall  staff    885 Sep  1 10:37 index.js
+drwxr-xr-x   5 randall  staff    160 Aug 25 17:31 lib
+-rw-r--r--   1 randall  staff  44196 Sep  2 08:08 package-lock.json
+-rw-r--r--   1 randall  staff    651 Aug 29 19:44 package.json
+drwxr-xr-x   6 randall  staff    192 Sep  1 19:33 test
+
+real	0m0.197s
+user	0m0.079s
+sys	0m0.025s
 Randalls-MBP:waitstaff randall$ node index.js google.com:80
 waiting for google.com:80 for 200 ms.
 Randalls-MBP:waitstaff randall$ echo $?
@@ -77,32 +130,45 @@ waiting for google.com:800 for 200 ms.
 timed out; no connection available
 Randalls-MBP:waitstaff randall$ echo $?
 1
-Randalls-MBP:waitstaff randall$ node index.js google.com:80 --timeout=2000
-waiting for google.com:80 for 2000 ms.
+Randalls-MBP:waitstaff randall$ node index.js google.com:800 -q
+timed out; no connection available
+Randalls-MBP:waitstaff randall$ echo $?
+1
+Randalls-MBP:waitstaff randall$ node index.js google.com:800 -t 2000
+waiting for google.com:800 for 2000 ms.
+timed out; no connection available
+Randalls-MBP:waitstaff randall$ echo $?
+1
+Randalls-MBP:waitstaff randall$ node index.js google.com:80 -- ls -l
+waiting for google.com:80 for 200 ms.
+Running `ls -l`
+total 136
+-rw-r--r--  1 randall  staff   1072 Aug 19 22:26 LICENSE
+-rw-r--r--  1 randall  staff   7356 Aug 25 17:25 README.md
+-rw-r--r--  1 randall  staff   1212 Aug 19 22:26 UNLICENSE
+-rw-r--r--  1 randall  staff    885 Sep  1 10:37 index.js
+drwxr-xr-x  5 randall  staff    160 Aug 25 17:31 lib
+-rw-r--r--  1 randall  staff  44196 Sep  2 08:08 package-lock.json
+-rw-r--r--  1 randall  staff    651 Aug 29 19:44 package.json
+drwxr-xr-x  6 randall  staff    192 Sep  1 19:33 test
 Randalls-MBP:waitstaff randall$ echo $?
 0
-Randalls-MBP:waitstaff randall$ node index.js google.com:800 --timeout=2000
-waiting for google.com:800 for 2000 ms.
-timed out; no connection available
+Randalls-MBP:waitstaff randall$ node index.js google.com:80 -- ls --quiet
+waiting for google.com:80 for 200 ms.
+Running `ls --quiet`
+ls: illegal option -- -
+usage: ls [-ABCFGHLOPRSTUWabcdefghiklmnopqrstuwx1] [file ...]
 Randalls-MBP:waitstaff randall$ echo $?
 1
-Randalls-MBP:waitstaff randall$ node index.js -q google.com:800 --timeout=2000
-Randalls-MBP:waitstaff randall$ echo $?
-1
-Randalls-MBP:waitstaff randall$ node index.js -t google.com:800 --timeout=2000 # error!
+Randalls-MBP:waitstaff randall$ node index.js --help
 
 Usage:
-  $cmdname [host]:port [-q] [-t <timeout>] [-- command args]
+  $cmdname [host]:port [-q] [-t <timeout>] [-- <command>[ <args>]]
+  -h | --help                         This message
   -q | --quiet                        Do not output any status messages
   -t <timeout> | --timeout=<timeout>  Timeout in seconds, zero for no timeout
-  -- COMMAND ARGS                     Execute command with args after the test finishes
+  -- <command> <args>                 Execute command with args after the test finishes
 
-Randalls-MBP:waitstaff randall$ node index.js google.com:800 --timeout=2000 -- ls -l
-waiting for google.com:800 for 2000 ms.
-timed out; no connection available
-Randalls-MBP:waitstaff randall$ node index.js google.com:800 --timeout=0 -- ls -l
-waiting for google.com:800 forever.
-^C
 Randalls-MBP:waitstaff randall$
 ```
 
@@ -128,7 +194,6 @@ Ideally every system would be resilient to upstream failure, but an increasingly
 
 ## roadmap
 
-1. tests (0.9.5)
 1. add ability to specify requirable modules (1.0)
 1. support URIs
    - `...://hostname` to check that the standard port is open
