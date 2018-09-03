@@ -1,2 +1,6 @@
 test
 README.md
+coverage
+.nyc_output
+.eslintrc.yml
+
