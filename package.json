@@ -1,6 +1,6 @@
 {
   "name": "waitstaff",
-  "version": "0.9.7",
+  "version": "0.9.8",
   "description": "Yet another waiter",
   "main": "index.js",
   "bin": "./index.js",
